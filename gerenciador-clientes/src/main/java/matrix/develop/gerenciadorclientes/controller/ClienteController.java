@@ -46,4 +46,10 @@ public class ClienteController {
         clienteService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping
+    public ResponseEntity<Void> replace(@RequestBody Cliente cliente) {
+        clienteService.replace(cliente);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
