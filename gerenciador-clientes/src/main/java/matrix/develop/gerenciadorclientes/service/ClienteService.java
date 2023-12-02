@@ -40,5 +40,9 @@ public class ClienteService {
         clientes.add(cliente);
         return cliente;
     }
+
+    public void delete(long id) {
+        clientes.remove(findById(id));
+    }
 }
 
