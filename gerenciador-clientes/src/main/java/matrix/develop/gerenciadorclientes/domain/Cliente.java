@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 //      -----Representa os dados de cadastros-----
 
@@ -21,6 +20,6 @@ public class Cliente {
     private String telefonePrincipal;
     private String telefoneRecado;
     private String celular;
-    private LocalDate dataCadastro;
+    private String dataCadastro;
     private String situacao = "ATIVO";
 }
