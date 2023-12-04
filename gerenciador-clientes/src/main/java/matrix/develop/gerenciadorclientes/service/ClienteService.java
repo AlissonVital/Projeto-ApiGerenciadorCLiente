@@ -1,16 +1,17 @@
 package matrix.develop.gerenciadorclientes.service;
 
 import matrix.develop.gerenciadorclientes.domain.Cliente;
+import matrix.develop.gerenciadorclientes.enums.ContactType;
+import matrix.develop.gerenciadorclientes.enums.DocumentType;
+import matrix.develop.gerenciadorclientes.enums.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 //      -----Lógica de negócio-----
 
@@ -19,9 +20,29 @@ public class ClienteService {
     private static List<Cliente> clientes;
     static {
         clientes = new ArrayList<>(List.of(
-                new Cliente(1L, "Alisson Ferreira", "33508590811", null, "409613666", null, "2974503", "20524503", "981199630", "01/12/2023", "ATIVO"),
-                new Cliente(2L, "Marcia Porto", "23422344144", null, "123456789", null, "24253748", "53040320", "953040320", "02/12/2023", "ATIVO")
-        ));
+                new Cliente(1L,
+                        "Alisson Vital",
+                        DocumentType.CPF,
+                        "289.738.050-02",
+                        null,
+                        DocumentType.RG,
+                        "40961366-6",
+                        ContactType.TELEFONE,
+                        "20524503",
+                        "01.12.2023",
+                        Status.ATIVO
+                    ), new Cliente(2L,
+                        "Marcia Vital",
+                        DocumentType.CPF,
+                        "853.667.010-07",
+                        null,
+                        DocumentType.RG,
+                        "40961366-6",
+                        ContactType.TELEFONE,
+                        "20524503",
+                        "01.12.2023",
+                        Status.ATIVO)
+                    ));
     }
 
     public List<Cliente> listAll() {
@@ -35,10 +56,35 @@ public class ClienteService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Celiente not Found"));
     }
 
-    public Cliente save(Cliente cliente) { //Ao clriar esse método, tive que acrescentar o static:private static List<Cliente> cliente = List.of, por não ter banco de dados ainda
+    public Cliente findByName(long name) {
+        return clientes.stream()
+                .filter(cliente -> cliente.getId().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Celiente not Found"));
+    }
+
+/*    public Cliente save(Cliente cliente) { //Ao clriar esse método, tive que acrescentar o static:private static List<Cliente> cliente = List.of, por não ter banco de dados ainda
         cliente.setId(ThreadLocalRandom.current().nextLong(3, 100000));
         clientes.add(cliente);
         return cliente;
+    }*/
+
+    public Cliente save(Cliente cliente) {
+        if (isCpfOrCnpjDuplicated(cliente.getCpf(), cliente.getCnpj())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CPF or CNPJ is already in use.");
+        }
+
+        cliente.setId(ThreadLocalRandom.current().nextLong(3, 100000));
+        clientes.add(cliente);
+        return cliente;
+    }
+
+    private boolean isCpfOrCnpjDuplicated(String cpf, String cnpj) {//  SERVIÇO PARA ALTERAR O TELEFONE DO CLIENTE
+        return clientes.stream()
+                .anyMatch(cliente ->
+                        (cpf != null && cpf.equals(cliente.getCpf())) ||
+                                (cnpj != null && cnpj.equals(cliente.getCnpj()))
+                );
     }
 
     public void delete(long id) {

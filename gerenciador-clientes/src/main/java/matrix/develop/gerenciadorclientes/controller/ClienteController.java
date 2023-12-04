@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +38,7 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> save(@RequestBody Cliente cliente) {
+    public ResponseEntity<Cliente> save(@RequestBody @Valid Cliente cliente) {
         return new ResponseEntity<>(clienteService.save(cliente), HttpStatus.CREATED);
     }
 
@@ -48,7 +49,7 @@ public class ClienteController {
     }
 
     @PutMapping
-    public ResponseEntity<Void> replace(@RequestBody Cliente cliente) {
+    public ResponseEntity<Void> replace(@RequestBody @Valid Cliente cliente) {
         clienteService.replace(cliente);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
